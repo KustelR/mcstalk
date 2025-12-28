@@ -5,7 +5,7 @@ from api import getReport, writeReport
 
 
 target = "localhost:25565"
-output_file = "report.csv"
+output_file = "report"
 interval = 60  # seconds
 
 

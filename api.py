@@ -28,6 +28,6 @@ def writeReport(output_file: str, target: str, report: Report):
     except FileExistsError:
         pass
 
-    with open(f"./reports/{output_file}_{target.replace(":", "")}", "a", newline="") as file:
+    with open(f"./reports/{output_file}_{target.replace(":", "")}.csv", "a", newline="") as file:
         writer = csv.writer(file)
         writer.writerow([str(report.timestamp), *report.players])
