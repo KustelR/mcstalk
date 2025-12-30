@@ -8,6 +8,9 @@ from Report import Report
 
 
 def get_player_list(status: JavaStatusResponse) -> list[str]:
+    if status.players.sample is None:
+        return []
+
     return list(map(lambda player:  player.name, status.players.sample))
 
 
@@ -16,11 +19,20 @@ def get_online(status: JavaStatusResponse) -> int:
 
 def getReport(server: JavaServer) -> Report:
     timestamp = datetime.now(UTC)
+    availability = True
+    status: JavaStatusResponse = None
+    online: int = 0
+    players: list[str] = []
 
-    status = server.status()
-    players = get_player_list(status)
-    online = get_online(status)
-    return Report(timestamp, players, online)
+    try:
+        status = server.status()
+        players = get_player_list(status)
+        online = get_online(status)
+    except Exception as e:
+        availability = False
+        print(f"During report collection exception was caught: {e}")
+    
+    return Report(timestamp, players, availability, online)
 
 def writeReport(output_file: str, target: str, report: Report):
     try:
@@ -30,4 +42,4 @@ def writeReport(output_file: str, target: str, report: Report):
 
     with open(f"./reports/{output_file}_{target.replace(":", "")}.csv", "a", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow([str(report.timestamp), *report.players])
+        writer.writerow(report.get_writable())

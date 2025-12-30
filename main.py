@@ -7,7 +7,10 @@ from api import getReport, writeReport
 def createReport():
     report = getReport(server)
     writeReport(OUTPUT_FILE, TARGET, report)
-    print(f"Report created at {report.timestamp}, {report.online} players online.")
+    if report.available:
+        print(f"Report created at {report.timestamp}, {report.online} players online.")
+    else:
+        print(f"Report created at {report.timestamp}, server unavailable")
     scheduler.enter(INTERVAL, 1, createReport)
 
 
